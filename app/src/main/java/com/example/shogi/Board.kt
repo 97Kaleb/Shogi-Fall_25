@@ -59,8 +59,8 @@ class Board {
                         }
                     }
 
-                    val lastRank = if (piece.isWhite) 0 else 8
-                    val secondLastRank = if (piece.isWhite) 1 else 7
+                    val lastRank = if (piece.isWhite) 8 else 0
+                    val secondLastRank = if (piece.isWhite) 7 else 1
                     if ( (piece is Pawn || piece is Lance) && r == lastRank) {
                         isValid = false
                     }
