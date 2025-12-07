@@ -15,12 +15,17 @@ This software was written in Kotlin in Android Studio using Compose. Gemini was 
 - [Wikipedia's Shogi article](https://en.wikipedia.org/wiki/Shogi)
 - [Compose for Android](https://developer.android.com/compose)
 - [Kotlin Documentation](https://kotlinlang.org/docs/home.html)
+- [Gson User Guide](https://google.github.io/gson/UserGuide.html)
+- [Android Developer: Network Service Discovery](https://developer.android.com/develop/connectivity/wifi/use-nsd)
+
+# UPDATE 1
+- Check, checkmate, and uchifuzume implemented
+- LAN connectivity added, allowing a user to host/join a game on his local network
+
+[New Demo Video]()
 
 # Future Work
 
-- Add functionality that allows the program to check for check, checkmate, etc.
-- Update piece icons so users can see at a glance which player's they are
-- Add netcode to allow for LAN multiplayer
 - Rotate the board for the first player's screen
-
 - Improve UI and readability.
+- Improve stability
