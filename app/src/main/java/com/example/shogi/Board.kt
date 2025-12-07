@@ -7,6 +7,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateList
  * The board is where all the pieces are stored.
  ****************************************************************************************/
 class Board {
+    val allMovesTo = mutableListOf<Move>()
 //  getters
     fun whiteTurn(): Boolean {if (numMoves % 2 == 0) {return true} else {return false}}
 
