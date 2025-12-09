@@ -22,10 +22,11 @@ This software was written in Kotlin in Android Studio using Compose. Gemini was 
 - Check, checkmate, and uchifuzume implemented
 - LAN connectivity added, allowing a user to host/join a game on his local network
 
-[New Demo Video]()
+[New Demo Video](https://youtu.be/qx_C6cxuo5w?si=k2VSz_iCXfYQMG5Q)
 
 # Future Work
 
 - Rotate the board for the first player's screen
 - Improve UI and readability.
-- Improve stability
+- Improve matchmaking
+
