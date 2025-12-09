@@ -147,7 +147,7 @@ class MainActivity : ComponentActivity() {
                         Button(onClick = {
                             isMultiplayer = false
                             showConnectionDialog = false
-                        }) { Text("Play Local (Hotseat)") }
+                        }) { Text("Pass and Play") }
 
                         Spacer(modifier = Modifier.height(20.dp))
 
@@ -222,6 +222,7 @@ class MainActivity : ComponentActivity() {
                             onNetworkMoveMade = { move ->
                                 gameServer?.sendMove(move)
                             },
+                            moveCount = refreshTrigger,
                             modifier = Modifier.padding(innerPadding)
                         )
                     }
@@ -249,8 +250,9 @@ class MainActivity : ComponentActivity() {
 fun ShogiBoard(
     board: Board,
     isMultiplayer: Boolean,
-    myPlayerColorIsWhite: Boolean, // True if we are White, False if Black
-    onNetworkMoveMade: (NetworkMove) -> Unit, // Callback when we make a move
+    myPlayerColorIsWhite: Boolean,
+    onNetworkMoveMade: (NetworkMove) -> Unit,
+    moveCount: Int, // Used to force a refresh every turn
     modifier: Modifier = Modifier
 ) {
     // State for tracking the currently selected piece on the board.
@@ -272,7 +274,7 @@ fun ShogiBoard(
     // State for tracking a selected piece from the captured pieces area.
     var selectedCapturedPiece by remember { mutableStateOf<Piece?>(null) }
     // Calculates the list of possible moves for the currently selected piece.
-    val possibleMoves: List<Move> by remember(selectedPiecePosition, board) {
+    val possibleMoves: List<Move> by remember(selectedPiecePosition, board, moveCount) { // Add moveCount
         mutableStateOf(
             selectedPiecePosition?.let { pos ->
                 val piece = board.board[pos.row][pos.column]
@@ -294,12 +296,11 @@ fun ShogiBoard(
         )
     }
 
-    // Extracts the destination positions from the list of possible moves.
+// Extracts the destination positions from the list of possible moves.
     val possibleDestinationPositions = possibleMoves.map { it.posTo }
 
-    // Calculates the list of valid positions where a selected captured piece can be dropped.
-    // Calculates the list of valid positions where a selected captured piece can be dropped.
-    val possibleDropPositions: List<Position> by remember(selectedCapturedPiece, board) {
+// Calculates the list of valid positions where a selected captured piece can be dropped.
+    val possibleDropPositions: List<Position> by remember(selectedCapturedPiece, board, moveCount) { // Add moveCount
         mutableStateOf(
             selectedCapturedPiece?.let { piece ->
                 val rawDropSpots = board.getValidDropPositions(piece)
@@ -333,12 +334,23 @@ fun ShogiBoard(
             onConfirm = {
                 piece.promote(board)
                 capturedPieceCount = board.whiteCaptured.size + board.blackCaptured.size
+                if (isMultiplayer && pendingNetworkMove != null) {
+                    // Update the pending move to indicate promotion happened
+                    val finalMove = pendingNetworkMove!!.copy(promote = true)
+                    onNetworkMoveMade(finalMove)
+                }
+                pendingNetworkMove = null
                 pieceToPromote = null
                 selectedPiecePosition = null
+
             },
             onDismiss = {
                 // If the user declines promotion, just reset the state.
                 capturedPieceCount = board.whiteCaptured.size + board.blackCaptured.size
+                if (isMultiplayer && pendingNetworkMove != null) {
+
+                }
+                pendingNetworkMove = null
                 pieceToPromote = null
                 selectedPiecePosition = null
             }
@@ -826,23 +838,3 @@ fun isUchifuzume(dropPos: Position, pieceToDrop: Piece, board: Board): Boolean {
 
     return isMate
 }
-
-
-/****************************************************************************************
- * A preview composable for displaying the Shogi board in Android Studio's preview panel.
- ****************************************************************************************/
-@Preview(showBackground = true)
-@Composable
-fun ShogiBoardPreview() {
-    ShogiTheme {
-        // Creates a board with the initial piece setup for the preview.
-        val board = Board().apply { initializeBoard() }
-        ShogiBoard(
-            board = board,
-            isMultiplayer = false,          // Dummy value: Preview is always local
-            myPlayerColorIsWhite = true,    // Dummy value
-            onNetworkMoveMade = {}          // Dummy value: Do nothing on move
-        )
-    }
-}
-
